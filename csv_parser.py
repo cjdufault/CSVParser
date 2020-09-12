@@ -17,7 +17,9 @@ def main():
             columns = get_column_names(csv_file)
             
             if column_name == None:
-                print_row(columns)
+                ask_for_column(columns)
+            if search_term == None:
+                search_term = input("Enter search term:\t")
                     
     except CSVError as csve:
         print(csve)
@@ -25,6 +27,7 @@ def main():
         print(fnfe)
         
         
+# read the first line of the file and use those values as column names
 def get_column_names(csv_file):
     top_line = csv_file.readline().strip()
     
@@ -34,8 +37,29 @@ def get_column_names(csv_file):
         return top_line.split(",")
     
 
-def print_row(values_list):
+# gets the column the user wants to search
+def ask_for_column(columns):
+    while True:
+        print("\nColumns:")
+        print_row(columns)
+        column_name = input("Select a column:\t")
+        
+        if column_name in columns:
+            return column_name
+        else:
+            print("Column not found")
     
+# prints the contents of a row from the csv, inputed as a list of values
+def print_row(values_list):
+    print_string = ""
+    
+    for value in values_list:
+        if " " in value or "\t" in value: # put in quotes if there's whitespace
+            value = f"'{value}'"
+            
+        print_string += value + " "
+    
+    print(print_string)
 
 
 # gets command line arguments
@@ -45,7 +69,7 @@ def parse_args():
     search_term = None
     
     if num_args == 1:
-        input_path = input("Input .csv file path:  ")
+        input_path = input("Input .csv file path:\t")
         
     elif num_args > 1:
         input_path = sys.argv[1]
